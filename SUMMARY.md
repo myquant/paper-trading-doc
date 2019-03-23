@@ -10,3 +10,4 @@
     - [交易事件](README.md#交易事件)
     - [枚举常量](README.md#枚举常量)
 - [错误码](README.md#错误码)
+- [错误码2](README.md#错误码)
