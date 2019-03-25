@@ -23,9 +23,9 @@ login()  ## 登录账户
 |:--------------------------------|:---------------------|:-----------------------------------------------------------------|
 | id                              | str                  | 账户id，实盘时用于指定交易账户                                                            |
 | title                           | str                 | 账户标题，实盘时用于指定账户名称                                                           |
-| cash                            | dict                 | [资金字典](#Cash - 资金对象 "资金字典")                                                  |
-| positions(symbol='', side=None) | list                 | [持仓情况](#Position - 持仓对象 "持仓情况") 列表, 默认全部持仓, 可根据单一symbol（类型str）, [side](/docs/python/python_enum_constant#PositionSide - 持仓方向 "PositionSide - 持仓方向")参数缩小查询范围 |
-| position(symbol, side)          | dict | [持仓情况](#Position - 持仓对象 "持仓情况")，查询指定单一symbol（类型str）及持仓方向的持仓情况                                                           |
+| cash                            | dict                 | [资金字典](#cash---资金对象 "资金字典")                                                  |
+| positions(symbol='', side=None) | list                 | [持仓情况](#Position---持仓对象 "持仓情况") 列表, 默认全部持仓, 可根据单一symbol（类型str）, [side](/docs/python/python_enum_constant#PositionSide - 持仓方向 "PositionSide - 持仓方向")参数缩小查询范围 |
+| position(symbol, side)          | dict | [持仓情况](#Position---持仓对象 "持仓情况")，查询指定单一symbol（类型str）及持仓方向的持仓情况                                                           |
 
  
 
@@ -42,7 +42,7 @@ login()  ## 登录账户
 | order_id              | str               | 委托柜台ID（系统字段）                                                                 |
 | ex_ord_id             | str               | 委托交易所ID（系统字段）                                                                |
 | symbol                | str               | 标的代码                                                   |
-| side                  | int               | 买卖方向 取值参考 [OrderSide](/docs/python/python_enum_constant#OrderSide - 委托方向 "OrderSide - 委托方向")                          |
+| side                  | int               | 买卖方向 取值参考 [OrderSide](/docs/python/python_enum_constant#OrderSide---委托方向 "OrderSide - 委托方向")                          |
 | position_effect       | int               | 开平标志 取值参考 [PositionEffect](/docs/python/python_enum_constant#PositionEffect - 开平仓类型 "PositionEffect - 开平仓类型")              |
 | position_side         | int               | 持仓方向 取值参考 [PositionSide](/docs/python/python_enum_constant#PositionSide - 持仓方向 "PositionSide - 持仓方向")                    |
 | order_type            | int               | 委托类型 取值参考 [OrderType](/docs/python/python_enum_constant#OrderType - 委托类型 "OrderType - 委托类型")                          |
