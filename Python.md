@@ -42,19 +42,19 @@ login()  ## 登录账户
 | order_id              | str               | 委托柜台ID（系统字段）                                                                 |
 | ex_ord_id             | str               | 委托交易所ID（系统字段）                                                                |
 | symbol                | str               | 标的代码                                                   |
-| side                  | int               | 买卖方向 取值参考 [OrderSide](#OrderSide---委托方向 "OrderSide - 委托方向")                          |
-| position_effect       | int               | 开平标志 取值参考 [PositionEffect](#PositionEffect---开平仓类型 "PositionEffect - 开平仓类型")              |
-| position_side         | int               | 持仓方向 取值参考 [PositionSide](#PositionSide---持仓方向 "PositionSide - 持仓方向")                    |
-| order_type            | int               | 委托类型 取值参考 [OrderType](#OrderType---委托类型 "OrderType - 委托类型")                          |
-| order_duration        | int               | 委托时间属性 取值参考 [OrderDuration](#OrderDuration---委托时间属性 "OrderDuration - 委托时间属性")           |
-| order_qualifier       | int               | 委托成交属性 取值参考 [OrderQualifier](#OrderQualifier---委托成交属性 "OrderQualifier - 委托成交属性")         |
+| side                  | int               | 买卖方向 取值参考 [OrderSide](#orderside---委托方向 "OrderSide - 委托方向")                          |
+| position_effect       | int               | 开平标志 取值参考 [PositionEffect](#positioneffect---开平仓类型 "PositionEffect - 开平仓类型")              |
+| position_side         | int               | 持仓方向 取值参考 [PositionSide](#positionside---持仓方向 "PositionSide - 持仓方向")                    |
+| order_type            | int               | 委托类型 取值参考 [OrderType](#ordertype---委托类型 "OrderType - 委托类型")                          |
+| order_duration        | int               | 委托时间属性 取值参考 [OrderDuration](#orderduration---委托时间属性 "OrderDuration - 委托时间属性")           |
+| order_qualifier       | int               | 委托成交属性 取值参考 [OrderQualifier](#orderqualifier---委托成交属性 "OrderQualifier - 委托成交属性")         |
 | order_src             | int               | 委托来源（系统字段）                                                                   |
-| status                | int               | 委托状态 取值参考 [OrderStatus](#OrderStatus---委托状态 "OrderStatus - 委托状态")                      |
-| ord_rej_reason        | int               | 委托拒绝原因 取值参考 [OrderRejegectReason](#OrderRejectReason---订单拒绝原因 "OrderRejectReason - 订单拒绝原因") |
+| status                | int               | 委托状态 取值参考 [OrderStatus](#orderstatus---委托状态 "OrderStatus - 委托状态")                      |
+| ord_rej_reason        | int               | 委托拒绝原因 取值参考 [OrderRejegectReason](#orderrejectreason---订单拒绝原因 "OrderRejectReason - 订单拒绝原因") |
 | ord_rej_reason_detail | str               | 委托拒绝原因描述                                                             |
 | price                 | float             | 委托价格                                                                   |
 | stop_price            | float             | 委托止损/止盈触发价格                                                        |
-| order_style           | int               | 委托风格 取值参考 [OrderStyle](#OrderStyle---订单类型 "OrderStyle - 订单类型")                        |
+| order_style           | int               | 委托风格 取值参考 [OrderStyle](#orderstyle---订单类型 "OrderStyle - 订单类型")                        |
 | volume                | long              | 委托量                                                                     |
 | value                 | int               | 委托额                                                                     |
 | percent               | float             | 委托百分比                                                                  |
@@ -79,11 +79,11 @@ login()  ## 登录账户
 | order_id              | str               | 委托柜台ID                                                                 |
 | exec_id             | str                | 委托交易所ID  
 |symbol               |str                  |委托标的
-| position_effect       | int               | 开平标志 取值参考 [PositionEffect](#PositionEffect---开平仓类型 "PositionEffect - 开平仓类型")              |
-| side                  | int               | 买卖方向 取值参考 [OrderSide](#OrderSide---委托方向 "OrderSide - 委托方向")                          |
-| ord_rej_reason        | int               | 委托拒绝原因 取值参考 [OrderRejectReason](#OrderRejectReason---订单拒绝原因 "OrderRejectReason - 订单拒绝原因")   |
+| position_effect       | int               | 开平标志 取值参考 [PositionEffect](#positioneffect---开平仓类型 "PositionEffect - 开平仓类型")              |
+| side                  | int               | 买卖方向 取值参考 [OrderSide](#orderside---委托方向 "OrderSide - 委托方向")                          |
+| ord_rej_reason        | int               | 委托拒绝原因 取值参考 [OrderRejectReason](#orderrejectreason---订单拒绝原因 "OrderRejectReason - 订单拒绝原因")   |
 | ord_rej_reason_detail | str               | 委托拒绝原因描述                                                             |
-| exec_type             | int               | 执行回报类型 取值参考 [ExecType](#ExecType---执行回报类型 "ExecType - 执行回报类型")                     |
+| exec_type             | int               | 执行回报类型 取值参考 [ExecType](#exectype---执行回报类型 "ExecType - 执行回报类型")                     |
 | price                 | float             | 委托成交价格                                                                |
 | volume                | long              | 委托成交量                                                                  |
 | amount                | float             | 委托成交金额
@@ -112,8 +112,8 @@ login()  ## 登录账户
 | last_pnl        | float             | 上一次收益                                                                               |
 | last_commission | float             | 上一次手续费                                                                             |
 | last_inout      | float             | 上一次出入金                                                                             |
-| change_reason   | int               | 资金变更原因 取值参考 [CashPositionChangeReason](#CashPositionChangeReason---仓位变更原因 "CashPositionChangeReason - 仓位变更原因")  |
-| change_event_id | str               | 触发资金变更事件的ID                                                                      |
+| change_reason   | int               | 资金变更原因 取值参考 [CashPositionChangeReason](#cashpositionchangereason---仓位变更原因 "CashPositionChangeReason - 仓位变更原因")  |
+| change_event_id | str               | 触发资金变更事件的id                                                                      |
 | created_at      | datetime.datetime | 资金初始时间                                                                             |
 | updated_at      | datetime.datetime | 资金变更时间                                                                             |
 
@@ -124,7 +124,7 @@ login()  ## 登录账户
 | account_id         | str               | 账号ID                                                                                  |
 | account_name       | str               | 账户登录名                                                                               |
 | symbol             | str               | 标的代码                                                                    |
-| side               | int               | 持仓方向 取值参考 [PositionSide](#PositionSide---持仓方向 "PositionSide - 持仓方向")                                 |
+| side               | int               | 持仓方向 取值参考 [PositionSide](#positionside---持仓方向 "PositionSide - 持仓方向")                                 |
 | volume             | long              | 总持仓量; 如果要得到昨持仓量，公式为 `(volume - volume_today)`                                              |
 | volume_today       | long              | 今日持仓量                                                                               |
 | vwap               | float             | 持仓均价 `new_vwap=((position.vwap * position.volume)+(trade.volume*trade.price))/(position.volume+trade.volume)`
@@ -140,7 +140,7 @@ login()  ## 登录账户
 | last_price         | float             | 上一次成交价（回测时值为0）                                                                             |
 | last_volume        | long              | 上一次成交量（回测时值为0）                                                                             |
 | last_inout         | int               | 上一次出入持仓量（回测时值为0）                                                                          |
-| change_reason      | int               | 仓位变更原因, 取值参考 [CashPositionChangeReason](#CashPositionChangeReason---仓位变更原因 "CashPositionChangeReason - 仓位变更原因") |
+| change_reason      | int               | 仓位变更原因, 取值参考 [CashPositionChangeReason](#cashpositionchangereason---仓位变更原因 "CashPositionChangeReason - 仓位变更原因") |
 | change_event_id    | str               | 触发资金变更事件的ID                                                                      |
 | created_at         | datetime.datetime | 建仓时间                                                                                |
 | updated_at         | datetime.datetime | 仓位变更时间
@@ -161,12 +161,12 @@ order_volume(symbol, volume, side, order_type,position_effect, price=0,order_dur
 |:----------------|:-----------------------------------|:--------------------------------------------|
 | symbol          | str                                | 标的代码                        |
 | volume          | int                                | 数量                                         |
-| side            | int                                | 参见[订单委托方向](#OrderSide---委托方向 "orderside---委托方向")              |
-| order_type           | int                                | 参见[订单委托类型](#OrderType---委托类型 "ordertype---委托类型")              |
-| position_effect | int                                | 参见[开平仓类型](#PositionEffect---开平仓类型 "positioneffect---开平仓类型")     |
+| side            | int                                | 参见[订单委托方向](#orderside---委托方向 "orderside---委托方向")              |
+| order_type           | int                                | 参见[订单委托类型](#ordertype---委托类型 "ordertype---委托类型")              |
+| position_effect | int                                | 参见[开平仓类型](#positioneffect---开平仓类型 "positioneffect---开平仓类型")     |
 | price           | float                                | 价格                                         |
-| order_duration  | int                                | 参见[ 委托时间属性](#OrderDuration---委托时间属性 "orderduration---委托时间属性")  |
-| order_qualifier | int                                | 参见[ 委托成交属性](#OrderQualifier---委托成交属性 "orderqualifier---委托成交属性") |
+| order_duration  | int                                | 参见[ 委托时间属性](#orderduration---委托时间属性 "orderduration---委托时间属性")  |
+| order_qualifier | int                                | 参见[ 委托成交属性](#orderqualifier---委托成交属性 "orderqualifier---委托成交属性") |
 | account         | account id or account name or None | 帐户                                         |
 
 **示例：**
@@ -259,7 +259,7 @@ order_cancel(wait_cancel_orders)
 
 | 参数名              | 类型         | 说明                                |
 |:-------------------|:------------|:-----------------------------------|
-| wait_cancel_orders | list\[str\] | 委托对象列表 or 单独委托对象，至少包含cl_ord_id， 参见[委托](#Order---委托对象 "Order---委托对象") |
+| wait_cancel_orders | list\[str\] | 委托对象列表 or 单独委托对象，至少包含cl_ord_id， 参见[委托](#order---委托对象 "Order---委托对象") |
 
 
 **示例：**
@@ -312,7 +312,7 @@ get_unfinished_orders()
 
 | 类型           | 说明                 |
 |:--------------|:--------------------|
-| list\[order\] | 委托对象列表，参见[委托](#Order---委托对象 "Order---委托对象") |
+| list\[order\] | 委托对象列表，参见[委托](#order---委托对象 "Order---委托对象") |
 
 **示例：**
 
@@ -341,7 +341,7 @@ get_orders()
 
 | 类型           | 说明                 |
 |:--------------|:--------------------|
-| list\[order\] | 委托对象列表，参见[委托](#Order---委托对象 "Order---委托对象") |
+| list\[order\] | 委托对象列表，参见[委托](#order---委托对象 "Order---委托对象") |
 
 **示例：**
 
@@ -371,7 +371,7 @@ get_execution_reports()
 
 | 类型           | 说明                 |
 |:--------------|:--------------------|
-| list\[execrpt\] | 回报对象列表， 参见[成交回报](#ExecRpt---回报对象 "ExecRpt---回报对象")   |
+| list\[execrpt\] | 回报对象列表， 参见[成交回报](#execrpt---回报对象 "ExecRpt---回报对象")   |
 
 **示例：**
 ```python
@@ -388,21 +388,20 @@ get_execution_reports()
 **函数原型:**
 
 ```
-on_order_status(context, order)
+on_order_status( order)
 ```
 
 **参数：**
 
 | 参数名   | 类型                    | 说明      |
 |:--------|:-----------------------|:----------|
-| context | [context](#context---上下文对象 "context---上下文对象") | 上下文 |
-| order   | [order](e#Order---委托对象 "Order---委托对象")        | 委托 |
+| order   | [order](#order---委托对象 "Order---委托对象")        | 委托 |
 
 
 **示例：**
 
 ```python
-def on_order_status(context, order):
+def on_order_status(order):
     print(order)
 ```
 
@@ -424,21 +423,21 @@ def on_order_status(context, order):
 **函数原型:**
 
 ```
-on_execution_report(context, execrpt)
+on_execution_report( execrpt)
 ```
 
 **参数：**
 
 | 参数名   | 类型                    | 说明                     |
 |:--------|:-----------------------|:-------------------------|
-| context | [context](#context---上下文对象 "context---上下文对象") | 上下文                |
-| execrpt | [execrpt](#ExecRpt---回报对象 "ExecRpt---回报对象")    | 回报 |
+          |
+| execrpt | [execrpt](#execrpt---回报对象 "ExecRpt---回报对象")    | 回报 |
 
 
 **示例：**
 
 ```python
-def on_execution_report(context, execrpt):
+def on_execution_report(execrpt):
     print(execrpt)
 ```
 
@@ -448,15 +447,14 @@ def on_execution_report(context, execrpt):
 
 **函数原型:**
 ```
-on_account_status(context, account)
+on_account_status(account)
 ```
 
 **参数：**
 
 | 参数名   | 类型                    | 说明                     |
 |:--------|:-----------------------|:-------------------------|
-| context | [context](#context---上下文对象 "context---上下文对象") | 上下文                |
-| account | object,  包含account_id(账户id), account_name(账户名),ConnectionStatus([账户状态](#AccountStatus---交易账户状态)) | 交易账户状态对象，仅响应 已连接，已登录，已断开 和 错误  事件。 |
+| account | object,  包含account_id(账户id), account_name(账户名),ConnectionStatus([账户状态](#accountstatus---交易账户状态)) | 交易账户状态对象，仅响应 已连接，已登录，已断开 和 错误  事件。 |
 
 ### on_error - 错误事件
 
@@ -465,21 +463,20 @@ on_account_status(context, account)
 **函数原型:**
 
 ```
-on_error(context, code, info)
+on_error(code, info)
 ```
 
 **参数：**
 
 | 参数名     | 类型                         | 说明                         |
 |:----------|:----------------------------|:----------------------------|
-| context   | [context](#context---上下文对象 "context---上下文对象")      | 上下文                    |
 | code | int | 错误码 |
 | info | str | 错误信息 |
 
 **示例：**
 
 ```python
-def on_error(context, code, info):
+def on_error(code, info):
     stop()
 ```
 
@@ -491,18 +488,12 @@ def on_error(context, code, info):
 **函数原型:**
 
 ```
-on_trade_data_connected(context)
+on_trade_data_connected()
 ```
-
-**参数：**
-
-| 参数名     | 类型                         | 说明                         |
-|:----------|:----------------------------|:----------------------------|
-| context   | [context](#context---上下文对象 "context---上下文对象")      | 上下文                    |
 
 **示例：**
 ```python
-def on_trade_data_connected(context):
+def on_trade_data_connected():
     print ('链接成功')
 ```
 
@@ -514,18 +505,12 @@ def on_trade_data_connected(context):
 **函数原型:**
 
 ```
-on_trade_data_disconnected(context)
+on_trade_data_disconnected()
 ```
-
-**参数：**
-
-| 参数名     | 类型                         | 说明                         |
-|:----------|:----------------------------|:----------------------------|
-| context   | [context](#context---上下文对象 "context---上下文对象")      | 上下文                    |
 
 **示例：**
 ```python
-def on_trade_data_disconnected(context):
+def on_trade_data_disconnected():
     print ('链接失败')
 ```
 ## 枚举常量

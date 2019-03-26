@@ -3,6 +3,7 @@
 - [产品特点](README.md#产品特点)
 - [使用指引](README.md#使用指引)
     - [新建账户](README.md#新建账户)
+    - [手工交易](README.md#手工交易)
     - [设置手续费和资金](README.md#设置手续费和资金)
     - [下载交易SDK](README.md#下载交易SDK)
     - [配置服务地址](README.md#配置服务地址)
