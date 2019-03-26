@@ -1,5 +1,6 @@
 # Summary
 - [产品与服务](README.md#产品与服务)
+- [产品特点](README.md#产品特点)
 - [使用指引](README.md#使用指引)
     - [新建账户](README.md#新建账户)
     - [设置手续费和资金](README.md#设置手续费和资金)
