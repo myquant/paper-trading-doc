@@ -7,7 +7,6 @@
     - [下载交易SDK](README.md#下载交易SDK)
     - [配置服务地址](README.md#配置服务地址)
     - [配置身份信息](README.md#配置身份信息)
-    - [交易界面](README.md#接口登录账户)
     - [进行交易和查询](README.md#进行交易和查询)
     - [更及时获取交易信息](README.md#更及时获取交易信息)
 - [python接口](Python.md#python接口)
