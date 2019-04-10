@@ -31,7 +31,7 @@
         - [查询日内全部执行回报](Python.md#getexecutionreports---查询日内全部执行回报)
     - [枚举常量](Python.md#枚举常量)
     - [错误码](Python.md#错误码)
-- [python接口](C++.md#C++)
+- [C++接口](C++.md#C++)
     - [示例](C++.md#示例)
     - [字段说明](C++.md#字段说明)
         - [账户对象](C++.md#account---账户对象)
