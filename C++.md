@@ -1,63 +1,34 @@
-# python接口
+[TOC]
+
+# C++
 
 ## 示例
+```cpp
+int main()
+{
+	//token身份认证
+	MyTrade mt ("xxx"); 
+	
+	// 示例中为掘金官方仿真服务地址，如接入掘金终端，则填空
+	mt.set_endpoint ("");
+	//登录账户
+	mt.login("xxx");
+	//事件回调启动函数
 
-```python
+	int status = mt.start ();
+	if (status == 0)
+	{
+		cout << "连接成功, 开始运行" << endl;
+	}
+	else
+	{
+		cout << "连接失败, 结束程序" << endl;
+		mt.stop ();
+	}
+	
+	// 保持进程不退出，否则回调不再生效
+	getchar();
 
-import time
-from gmtrade.api import *
-
- # token身份认证，登录后可在仿真交易官网获取
-set_token("token")
- 
- # 示例中为掘金官方仿真服务地址，如接入掘金终端，则填空
-set_endpoint("") 
-
-# 登录账户，账户ID由登录并申请仿真账户后，可复制获取；account_alias为账号别名，选填
-a1 = account(account_id='', account_alias='')
-login([a1])  # 注意结构是list
-
-def on_execution_report(rpt):
-    # type: (ExecRpt) -> NoReturn
-    global exec_rpt_count
-    exec_rpt_count = exec_rpt_count + 1
-    if exec_rpt_count % 100 == 0:
-        gmtradelogger.info(f'exec_rpt_count={exec_rpt_count}')
-
-
-def on_order_status(order):
-    # type: (Order) -> NoReturn
-    gmtradelogger.info(f'order_stats_count={order_stats_count}')
-
-
-def on_trade_data_connected():
-    gmtradelogger.info('连接上交易服务器.................')
-
-
-def on_trade_data_disconnected():
-    gmtradelogger.info('断开交易服务器......................')
-
-
-def on_account_status(account_status):
-    # type: (AccountStatus) -> NoReturn
-    gmtradelogger.info(f'on_account_status status={account_status}')
-    
-# start函数用于启动回调事件接收，为非阻塞函数，如需要同步执行需自行阻塞
-status = start(filename=__file__) 
- 
-if status == 0:
-    gmtradelogger.info('连接成功, 开启运行')
-else:
-    gmtradelogger.info('连接失败, 结束程序')
-    stop()
-
-
-# 开始交易业务
-
-
-# 保持进程不退出，否则回调不再生效
-while True:
-    time.sleep(2)
 ```
 ## 字段说明
 
@@ -191,63 +162,60 @@ while True:
 | updated_at         | datetime.datetime | 仓位变更时间
 
 ## 账户登录
-### 构建资金帐号
+### set_token - 设置用户token
 
 **函数原型:**
 
-```python
-account(account_id='', account_alias='')
+```cpp
+void set_token(const char *token);
+```
+
+**参数：**
+
+| 参数名   | 类型                    | 说明      |
+|:--------|:-----------------------|:----------|
+| token | const char * | 系统权限密钥,可在终端系统设置-密钥管理中生成 |
+
+
+**注意事项：**
+
+不管是从构造函数传入还成员函数传入，`token`, `strategy_id`, `mode` 都是必须要设置的参数。
+
+
+
+### login - 登录账户
+
+**注意**  参数传入`account_ids` 字符串, 多个账户使用`,`分隔.
+
+**函数原型:**
+
+```
+int login(const char *account_ids);
 ```
 
 **参数：**
 
 | 参数名           | 类型                                | 说明                                         |
 |:----------------|:-----------------------------------|:--------------------------------------------|
-| account_id           | str               | 帐号id                                                                     |
-| account_alias        | str               | 帐号别名, 可以不填                                                        |
-
-返回 `Account` 对象
-
-
-### 登陆资金帐号
-
-**注意**  参数传入`account` 对象集合, 约定第1个登陆成功的account对象为默认帐号, 如需要指定其他账号交易需要在函数中指定account
-
-**函数原型:**
-
-```
-login(accounts)
-```
-
-**参数：**
-
-| 参数名           | 类型                                | 说明                                         |
-|:----------------|:-----------------------------------|:--------------------------------------------|
-| accounts          | iterable\[account\]                |  资金帐号集合                       |
+| account_ids          | const char*                |  资金帐号                       |
 
 ## 使用消息推送功能
-### 开启消息接收start
+### start - 开启消息接收
 
 启动eventloop，接收交易事件并触发回调函数. 返回int值, 0表示成功, 非0为失败
 
 **函数原型:**
 
-```
-start(filename=None, token=None, endpoint=None)
+```cpp
+int start();
 ```
 
-**参数：**
-
-| 参数名           | 类型                                | 说明                                         |
-|:----------------|:-----------------------------------|:--------------------------------------------|
-| filename          | str               | 回调函数所在的文件. 当前文件可使用特殊变量 `__file__` |
-| token          | str               | token身份认证，登录后可在仿真交易官网获取|
-| endpoint         | str               | 仿真服务地址，不填默认本地终端服务地址|
+**成功值**
+成功返回0, 否则返回错误码.
 
 **注意：**需要保持进程不退出，如：
-```python
-while True:
-    time.sleep(2)
+```cpp
+getchar()
 ```
 
 
@@ -263,177 +231,148 @@ stop()
 ## 交易事件类型
 
 用start()启动交易事件函数后，可以通过指定的交易事件函数接收对应类型的事件（如果多个账号需要在事件回调值中区分）
-### on_order_status - 委托状态更新事件
+### on_order_status - 委托变化
 
-响应委托状态更新事情，下单后及委托状态更新时被触发。
+委托变化时触发
+
 
 **函数原型:**
 
+```cpp
+virtual void on_order_status(Order *order);
+
 ```
-on_order_status( order)
-```
+
 
 **参数：**
 
 | 参数名   | 类型                    | 说明      |
 |:--------|:-----------------------|:----------|
-| order   | [order](#order---委托对象 "Order---委托对象")        | 委托 |
+| order |  Order* | 发生变化的委托 |
 
 
-**示例：**
+### on_execution_report - 执行回报
 
-```python
-def on_order_status(order):
-    print(order)
-```
+收到回报时触发
 
-
-**输出：**
-
-```
-  status    ord_rej_reason  account_id      position_side    volume  symbol         target_percent    percent  updated_at             value    side    position_effect    target_volume    price    order_style  created_at           ord_rej_reason_detail    strategy_id      target_value    order_type
---------  ----------------  ------------  ---------------  --------  -----------  ----------------  ---------  -------------------  -------  ------  -----------------  ---------------  -------  -------------  -------------------  -----------------------  -------------  --------------  ------------
-    8                 3       strategy_id             1     18229  SZSE.002528        -0.0999982        0.1  2017-07-27 07:00:01   100261       2                  2           -18229      5.5              3   2017-07-27 07:00:01    仓位不足 可用=16479       strategy_id      -100260            2
-
-```
-
-
-### on_execution_report - 委托执行回报事件
-
-响应委托被执行事件，委托成交后被触发。
 
 **函数原型:**
 
+```cpp
+virtual void on_execution_report(ExecRpt *rpt);
+
 ```
-on_execution_report( execrpt)
-```
+
 
 **参数：**
 
-| 参数名   | 类型                    | 说明                     |
-|:--------|:-----------------------|:-------------------------|
-          |
-| execrpt | [execrpt](#execrpt---回报对象 "ExecRpt---回报对象")    | 回报 |
+| 参数名   | 类型                    | 说明      |
+|:--------|:-----------------------|:----------|
+| rpt |  ExecRpt* | 收到的回报 |
 
 
-**示例：**
 
-```python
-def on_execution_report(execrpt):
-    print(execrpt)
-```
+### on_account_status - 实盘账号状态变化
 
-
-### on_account_status - 交易账户状态更新事件
+实盘账号状态变化时触发, 比如实盘账号登录，退出登录等
 
 
 **函数原型:**
+
+```cpp
+virtual void on_account_status(AccountStatus *account_status);
+
 ```
-on_account_status(account)
-```
+
 
 **参数：**
 
-| 参数名   | 类型                    | 说明                     |
-|:--------|:-----------------------|:-------------------------|
-| account | object,  包含account_id(账户id), account_name(账户名),ConnectionStatus([账户状态](#accountstatus---交易账户状态)) | 交易账户状态对象，仅响应 已连接，已登录，已断开 和 错误  事件。 |
+| 参数名   | 类型                    | 说明      |
+|:--------|:-----------------------|:----------|
+| account_status | AccountStatus * | 对应变化的账号|
 
-### on_error - 错误事件
 
-描述：
-当发生异常情况，比如断网时、终端服务崩溃是会触发
+
+### on_error - 错误产生
+
+有错误产生时触发, 比如网络断开。
+
+
 **函数原型:**
 
+```cpp
+virtual void on_error(int error_code, const char *error_msg);
+
 ```
-on_error(code, info)
-```
+
 
 **参数：**
 
-| 参数名     | 类型                         | 说明                         |
-|:----------|:----------------------------|:----------------------------|
-| code | int | 错误码 |
-| info | str | 错误信息 |
+| 参数名   | 类型                    | 说明      |
+|:--------|:-----------------------|:----------|
+| error_code | int | 错误码|
+| error_msg | const char * | 错误信息|
 
-**示例：**
 
-```python
-def on_error(code, info):
-    stop()
-```
 
-### on_trade_data_connected - 交易通道网络连接成功事件
+### on_trade_data_connected - 交易已经连接上
 
-描述：
-目前监控SDK的交易和终端的链接情况，终端之后部分暂未做在内。账号连接情况可通过终端内账户连接指示灯查看
+交易已经连接时触发
+
 
 **函数原型:**
 
-```
-on_trade_data_connected()
-```
+```cpp
+virtual void on_trade_data_connected();
 
-**示例：**
-```python
-def on_trade_data_connected():
-    print ('链接成功')
 ```
 
-### on_trade_data_disconnected - 交易通道网络连接断开事件
 
-描述：
-目前监控SDK的交易和终端的链接情况，终端交易服务崩溃后会触发，终端之后部分暂未做在内。账号连接情况可通过终端内账户连接指示灯查看
+### on_trade_data_disconnected - 交易连接断开了
+
+交易连接断开时触发
+
 
 **函数原型:**
 
-```
-on_trade_data_disconnected()
-```
+```cpp
+virtual void on_trade_data_disconnected();
 
-**示例：**
-```python
-def on_trade_data_disconnected():
-    print ('链接失败')
 ```
-
 
 ## 委托和查询
-
 ### order_volume - 按指定量委托
+
+按指定量委托, 如果调用成功，后续委托单状态变化将会触发on_order_status回调。
 
 **函数原型:**
 
-```
-order_volume(symbol, volume, side, order_type,position_effect, price=0,order_duration=OrderDuration_Unknown, order_qualifier=OrderQualifier_Unknown,account='')
+```cpp
+Order order_volume(const char *symbol, int volume, int side, int order_type, int position_effect, double price = 0, const char *account = NULL);
 ```
 
 **参数：**
 
 | 参数名           | 类型                                | 说明                                         |
 |:----------------|:-----------------------------------|:--------------------------------------------|
-| symbol          | str                                | 标的代码                        |
-| volume          | int                                | 数量                                         |
-| side            | int                                | 参见[订单委托方向](#orderside---委托方向 "orderside---委托方向")              |
-| order_type           | int                                | 参见[订单委托类型](#ordertype---委托类型 "ordertype---委托类型")              |
-| position_effect | int                                | 参见[开平仓类型](#positioneffect---开平仓类型 "positioneffect---开平仓类型")     |
-| price           | float                                | 价格                                         |
-| order_duration  | int                                | 参见[ 委托时间属性](#orderduration---委托时间属性 "orderduration---委托时间属性")  |
-| order_qualifier | int                                | 参见[ 委托成交属性](#orderqualifier---委托成交属性 "orderqualifier---委托成交属性") |
-| account         | account id or account name or None | 帐户                                         |
+| symbol          | const char *                       | 标的代码，只能单个标的                        |
+| volume          | int                                | 委托数量                                         |
+| side            | int                                | 委托方向 参见 `enum OrderSide`              |
+| order_type      | int                                | 委托类型 参见 `enum OrderType`       |
+| position_effect | int                                | 开平类型 参见 `enum PositionSide`    |
+| price           | double                             | 委托价格                                         |
+| account         | const char * | 实盘账号id,关联多实盘账号时填写，可以从 get_accounts获取，也可以从终端实盘账号配置里拷贝。如果策略只关联一个账号，可以设置为NULL|
+| 返回值 | Order | 一个Order结构, 如果函数调用失败， Order.status 值为 `OrderStatus_Rejected`, Order.ord_rej_reason_detail 为错误原因描述, 其它情况表示函数调用成功，Order.cl_ord_id 为本次委托的标识，可用于追溯订单状态或撤单  |
 
 **示例：**
 
-```python
-data = order_volume(symbol='SHSE.600000', volume=10000, side=OrderSide_Buy, order_type=OrderType_Limit, position_effect=PositionEffect_Open, price=11)
-```
-
-**返回：**
+```cpp
+//以11块的价格限价买入10000股浦发银行
+Order o = order_volume("SHSE.600000", 10000, OrderSide_Buy, OrderType_Limit, PositionEffect_Open， 11);
 
 ```
- status    volume  account_id    created_at             position_side  symbol         target_percent    percent    value    side    position_effect    target_volume    filled_amount    filled_volume    order_style    filled_vwap    price  strategy_id      target_value    order_type
---------  --------  ------------  -------------------  ---------------  -----------  ----------------  ---------  -------  ------  -----------------  ---------------  ---------------  ---------------  -------------  -------------  -------  -------------  --------------  ------------
-       3     10000  strategy_id   2017-07-06 07:00:01                1  SHSE.600000              0.11       0.11   110000       1                  1            10000           110000            10000              1             11       11  strategy_id            110000             1
-```
+
+
 **注意：**
 
 **1.**仅支持一个标的代码，若交易代码输入有误，终端会拒绝此单，并显示`委托代码不正确`。
@@ -444,197 +383,131 @@ data = order_volume(symbol='SHSE.600000', volume=10000, side=OrderSide_Buy, orde
 
 **4.**Order_type优先级高于price,若指定OrderTpye_Market下市价单，使用价格为最新一个tick中的最新价，price参数失效。则price参数失效。若OrderTpye_Limit限价单，仿真模式价格错误，终端拒绝此单，显示委托价格错误，`回测模式下对价格无限制`。
 
-**5.**输入无效参数报`NameError`错误，缺少参数报`TypeError`错误。
+**5.**函数调用成功并不意味着委托已经成功，只是意味委托单已经成功发出去， 委托是否成功根据on_order_status，或 get_order来判断。
 
 
+### order_cancel - 委托撤单
 
-### order_batch - 批量委托接口
+撤销单个委托单, 如果调用成功，后续委托单状态变化将会触发on_order_status回调
+
 
 **函数原型:**
 
-```
-order_batch(orders, combine=False, account='')
+```cpp
+int order_cancel(const char *cl_ord_id, const char *account = NULL);
+
 ```
 
 **参数：**
 
-| 参数名   | 类型                                | 说明                 |
-|:--------|:-----------------------------------|:--------------------|
-| orders  | list\[order\]                      |  委托对象列表，其中委托至少包含交易接口的必选参数，参见[委托](e#Order - 委托对象 "Order 委托对象")|
-| combine | bool                               | 是否是组合单, 默认不是 |
-| account | account id or account name or None | 帐户                 |
-
-**示例：**
-
-```python
-    order_1 = {'symbol': 'SHSE.600000', 'volume': 100, 'price': 11, 'side': 1,
-               'order_type': 2, 'position_effect':1}
-    order_2 = {'symbol': 'SHSE.600004', 'volume': 100, 'price': 11, 'side': 1,
-               'order_type': 2, 'position_effect':1}
-    orders = [order_1, order_2]
-    batch_orders = order_batch(orders, combine=True)
-    for order in batch_orders:
-        print(order)
-```
-
-**返回：**
-
-```
-   status    volume  account_id    created_at             position_side  symbol         target_percent    percent    value    side    position_effect    target_volume    filled_amount    filled_volume    order_style    filled_vwap    price  strategy_id      target_value    order_type
---------  --------  ------------  -------------------  ---------------  -----------  ----------------  ---------  -------  ------  -----------------  ---------------  ---------------  ---------------  -------------  -------------  -------  -------------  --------------  ------------
-       3      9000  strategy_id   2017-07-06 07:00:01                1  SHSE.600000             0.099        0.1   100000       1                  1             9000            99000             9000              3             11       11  strategy_id             99000             1
-
-```
-
-**注意：**
-
-**1.**每个order的symbol仅支持一个标的代码，若交易代码输入有误，终端会拒绝此单，并显示`委托代码不正确`。
-
-**2.**若下单数量输入有误，终端会拒绝此单，并显示`委托量不正确`。`下单数量严格按照指定数量下单`，需注意股票买入最小单位为100。
-
-**3.**若仓位不足，终端会拒绝此单，`显示仓位不足`。应研究需要，`股票也支持卖空操作`。
-
-**4.**Order_type优先级高于price,若指定OrderTpye_Market下市价单，则price参数失效。若OrderTpye_Limit限价单，仿真模式价格错误，终端拒绝此单，显示委托价格错误，`回测模式下对价格无限制`。
-
-**5.**输入无效参数报NameError错误，缺少参数不报错，可能会出现下单被拒。
+| 参数名   | 类型                    | 说明      |
+|:--------|:-----------------------|:----------|
+| cl_ord_id | const char * | 委托单的客户id, 可以在下单或查单时获得 |
+| account   | const char * | 实盘账号id, 关联多实盘账号时填写，可以从 get_accounts获取，也可以从终端实盘账号配置里拷贝。如果策略只关联一个账号，可以设置为NULL|
+| 返回值 | int | 成功返回0， 失败返回错误码 |
 
 
-### order_cancel - 撤销委托
-
-**函数原型:**
-
-```
-order_cancel(wait_cancel_orders)
-```
-
-**参数：**
-
-| 参数名              | 类型         | 说明                                |
-|:-------------------|:------------|:-----------------------------------|
-| wait_cancel_orders | list\[str\] | 委托对象列表 or 单独委托对象，至少包含cl_ord_id， 参见[委托](#order---委托对象 "Order---委托对象") |
-
-
-**示例：**
-
-```python
-order_1 = {'symbol': 'SHSE.600000', 'cl_ord_id': 'cl_ord_id_1', 'price': 11, 'side': 1, 'order_type':1 }
-order_2 = {'symbol': 'SHSE.600004', 'cl_ord_id': 'cl_ord_id_2', 'price': 11, 'side': 1, 'order_type':1 }
-orders = [order_1, order_2]
-order_cancel(wait_cancel_orders=orders)
-
-```
 
 ### order_cancel_all - 撤销所有委托
 
+撤销所有委托, 如果调用成功，后续委托单状态变化将会触发on_order_status回调
+
+
 **函数原型:**
 
-```
-order_cancel_all()
+```cpp
+int order_cancel_all();
 ```
 
-**示例：**
+**参数：**
 
-```python
-order_cancel_all()
-```
+| 参数名   | 类型                    | 说明      |
+|:--------|:-----------------------|:----------|
+| 返回值 | int | 成功返回0， 失败返回错误码 |
 
 ### order_close_all - 平当前所有可平持仓
 
-**函数原型:**
+平当前所有可平持仓, 如果调用成功，后续委托单状态变化将会触发on_order_status回调
 
-```
-order_close_all()
-```
-
-**示例：**
-
-```python
-order_close_all()
-```
-
-### get_unfinished_orders - 查询日内全部未结委托
 
 **函数原型:**
 
-```
-get_unfinished_orders()
-```
-
-**返回值:**
-
-| 类型           | 说明                 |
-|:--------------|:--------------------|
-| list\[order\] | 委托对象列表，参见[委托](#order---委托对象 "Order---委托对象") |
-
-**示例：**
-
-```python
-get_unfinished_orders()
-```
-
-**返回：**
-
-```
-   status    volume  account_id    created_at             position_side  symbol         target_percent    percent    value    side    position_effect    target_volume    filled_amount    filled_volume    order_style    filled_vwap    price  strategy_id      target_value    order_type
---------  --------  ------------  -------------------  ---------------  -----------  ----------------  ---------  -------  ------  -----------------  ---------------  ---------------  ---------------  -------------  -------------  -------  -------------  --------------  ------------
-       3      9000  strategy_id   2017-07-06 07:00:01                1  SHSE.600000             0.099        0.1   100000       1                  1             9000            99000             9000              3             11       11  strategy_id             99000             1
+```cpp
+DataArray<Order>* order_close_all();
 
 ```
 
-### get_orders - 查询日内全部委托
+**参数：**
+
+| 参数名   | 类型                    | 说明      |
+|:--------|:-----------------------|:----------|
+| 返回值 | `DataArray<Order>*` | 一个Order结构数组 |
+
+
+### get_unfinished_orders - 查询未结委托
+
+查询所有未结委托
+
 
 **函数原型:**
 
-```
-get_orders()
-```
-
-**返回值:**
-
-| 类型           | 说明                 |
-|:--------------|:--------------------|
-| list\[order\] | 委托对象列表，参见[委托](#order---委托对象 "Order---委托对象") |
-
-**示例：**
-
-```python
-get_orders()
+```cpp
+DataArray<Order>* get_unfinished_orders(const char *account = NULL);
 ```
 
-**返回：**
+**参数：**
 
-```
-   status    volume  account_id    created_at             position_side  symbol         target_percent    percent    value    side    position_effect    target_volume    filled_amount    filled_volume    order_style    filled_vwap    price  strategy_id      target_value    order_type
---------  --------  ------------  -------------------  ---------------  -----------  ----------------  ---------  -------  ------  -----------------  ---------------  ---------------  ---------------  -------------  -------------  -------  -------------  --------------  ------------
-       3      9000  strategy_id   2017-07-06 07:00:01                1  SHSE.600000             0.099        0.1   100000       1                  1             9000            99000             9000              3             11       11  strategy_id             99000             1
-
-```
+| 参数名   | 类型                    | 说明      |
+|:--------|:-----------------------|:----------|
+| account | const char * | 账号ID`account_id`, 如果输入为NULL, 则返回所有账号的委托 |
+| 返回值 | `DataArray<Order>*` | 一个Order结构数组 |
 
 
-### get_execution_reports - 查询日内全部执行回报
+
+### get_orders - 查询所有委托
+
+查询所有委托单
+
 
 **函数原型:**
 
-```
-get_execution_reports()
+```cpp
+DataArray<Order>* get_orders(const char *account = NULL);
 ```
 
-**返回值:**
+**参数：**
 
-| 类型           | 说明                 |
-|:--------------|:--------------------|
-| list\[execrpt\] | 回报对象列表， 参见[成交回报](#execrpt---回报对象 "ExecRpt---回报对象")   |
+| 参数名   | 类型                    | 说明      |
+|:--------|:-----------------------|:----------|
+| account | const char * | 账号ID`account_id`, 如果输入为NULL, 则返回所有账号的委托 |
+| 返回值 | `DataArray<Order>*` | 一个Order结构数组 |
 
-**示例：**
-```python
-get_execution_reports()
+
+
+### get_execution_reports - 查询成交
+
+查询所有成交
+
+
+**函数原型:**
+
+```cpp
+DataArray<ExecRpt>* get_execution_reports(const char *account = NULL);
 ```
+
+**参数：**
+
+| 参数名   | 类型                    | 说明      |
+|:--------|:-----------------------|:----------|
+| account | const char * | 账号ID`account_id`, 如果输入为NULL, 则返回所有账号的成交 |
+| 返回值 | `DataArray<ExecRpt>*` | 一个ExecRpt结构数组 |
+
 
 ## 枚举常量
 
 #### OrderStatus - 委托状态
 
-```python
+```cpp
 OrderStatus_Unknown = 0
 OrderStatus_New = 1                   ## 已报
 OrderStatus_PartiallyFilled = 2       ## 部成
@@ -649,7 +522,7 @@ OrderStatus_Expired = 12              ## 已过期
 
 #### OrderSide - 委托方向
 
-```python
+```cpp
 OrderSide_Unknown = 0     
 OrderSide_Buy = 1             ## 买入
 OrderSide_Sell = 2            ## 卖出
@@ -657,7 +530,7 @@ OrderSide_Sell = 2            ## 卖出
 
 #### OrderType - 委托类型
 
-```python
+```cpp
 OrderType_Unknown = 0  
 OrderType_Limit = 1            ## 限价委托
 OrderType_Market = 2           ## 市价委托
@@ -667,7 +540,7 @@ OrderType_Stop = 3             ## 止损止盈委托
 #### OrderDuration - 委托时间属性
 仅在实盘模式生效，具体执行模式请参考交易所给出的定义
 
-```python
+```cpp
 OrderDuration_Unknown = 0          
 OrderDuration_FAK = 1           ## 即时成交剩余撤销(fill and kill)
 OrderDuration_FOK = 2           ## 即时全额成交或撤销(fill or kill)
@@ -681,7 +554,7 @@ OrderDuration_GFA = 7           ## 集合竞价前有效(good for auction)
 #### OrderQualifier - 委托成交属性
 仅在实盘模式生效，具体执行模式请参考交易所给出的定义
 
-```python
+```cpp
 OrderQualifier_Unknown = 0          
 OrderQualifier_BOC     = 1            ## 对方最优价格(best of counterparty)
 OrderQualifier_BOP     = 2            ## 己方最优价格(best of party)
@@ -691,7 +564,7 @@ OrderQualifier_B5TL    = 4            ## 最优五档剩余转限价(best 5 then
 
 #### ExecType - 执行回报类型
 
-```python
+```cpp
 ExecType_Unknown = 0
 ExecType_New = 1                      ## 已报
 ExecType_Canceled = 5                 ## 已撤销
@@ -708,7 +581,7 @@ ExecType_CancelRejected = 19          ## 撤单被拒绝
 
 #### PositionEffect - 开平仓类型
 
-```python
+```cpp
 PositionEffect_Unknown = 0
 PositionEffect_Open = 1                  ## 开仓
 PositionEffect_Close = 2                 ## 平仓, 具体语义取决于对应的交易所
@@ -719,7 +592,7 @@ PositionEffect_CloseYesterday = 4        ## 平昨仓
 
 #### PositionSide - 持仓方向
 
-```python
+```cpp
 PositionSide_Unknown = 0
 PositionSide_Long = 1            ## 多方向
 PositionSide_Short = 2           ## 空方向
@@ -727,7 +600,7 @@ PositionSide_Short = 2           ## 空方向
 
 #### OrderRejectReason - 订单拒绝原因
 
-```python
+```cpp
 OrderRejectReason_Unknown = 0                          ## 未知原因
 OrderRejectReason_RiskRuleCheckFailed = 1              ## 不符合风控规则
 OrderRejectReason_NoEnoughCash = 2                     ## 资金不足
@@ -747,7 +620,7 @@ OrderRejectReason_Throttle = 15                        ## 流控限制
 
 #### CancelOrderRejectReason - 取消订单拒绝原因
 
-```python
+```cpp
 CancelOrderRejectReason_OrderFinalized = 101           ## 委托已完成
 CancelOrderRejectReason_UnknownOrder = 102             ## 未知委托
 CancelOrderRejectReason_BrokerOption = 103             ## 柜台设置
@@ -756,7 +629,7 @@ CancelOrderRejectReason_AlreadyInPendingCancel = 104   ## 委托撤销中
 
 #### OrderStyle - 订单类型
 
-```python
+```cpp
 OrderStyle_Unknown = 0
 OrderStyle_Volume = 1                                  ## 按指定量委托
 OrderStyle_Value = 2                                   ## 按指定价值委托
@@ -768,14 +641,14 @@ OrderStyle_TargetPercent = 6                           ## 调仓到目标持仓�
 
 #### CashPositionChangeReason - 仓位变更原因
 
-```python
+```cpp
 CashPositionChangeReason_Unknown = 0
 CashPositionChangeReason_Trade = 1            ## 交易
 CashPositionChangeReason_Inout = 2            ## 出入金 / 出入持仓
 ```
 
 #### SecType - 标的类别
-```python
+```cpp
 SEC_TYPE_STOCK = 1                          ## 股票
 SEC_TYPE_FUND = 2                           ## 基金
 SEC_TYPE_INDEX = 3                          ## 指数
@@ -786,7 +659,7 @@ SEC_TYPE_CONFUTURE = 10                     ## 虚拟合约
 
 
 #### AccountStatus - 交易账户状态
-```python
+```cpp
 
 State_UNKNOWN = 0;       //未知
 State_CONNECTING = 1;    //连接中
