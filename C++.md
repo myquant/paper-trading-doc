@@ -191,8 +191,7 @@ while True:
 | updated_at         | datetime.datetime | 仓位变更时间
 
 ## 账户登录
-
-构建资金帐号
+### 构建资金帐号
 
 **函数原型:**
 
@@ -209,6 +208,9 @@ account(account_id='', account_alias='')
 
 返回 `Account` 对象
 
+
+### 登陆资金帐号
+
 **注意**  参数传入`account` 对象集合, 约定第1个登陆成功的account对象为默认帐号, 如需要指定其他账号交易需要在函数中指定account
 
 **函数原型:**
@@ -224,6 +226,7 @@ login(accounts)
 | accounts          | iterable\[account\]                |  资金帐号集合                       |
 
 ## 使用消息推送功能
+### 开启消息接收start
 
 启动eventloop，接收交易事件并触发回调函数. 返回int值, 0表示成功, 非0为失败
 
