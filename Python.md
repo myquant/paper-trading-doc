@@ -3,52 +3,44 @@
 ## 示例
 
 ```python
-
-import time
+# 本示例运行于python3.6以上版本
 from gmtrade.api import *
 
  # token身份认证，登录后可在仿真交易官网获取
 set_token("token")
  
  # 示例中为掘金官方仿真服务地址，如接入掘金终端，则填空
-set_endpoint("") 
+set_endpoint("discovery.myquant.cn") 
 
 # 登录账户，账户ID由登录并申请仿真账户后，可复制获取；account_alias为账号别名，选填
 a1 = account(account_id='', account_alias='')
 login([a1])  # 注意结构是list
 
 def on_execution_report(rpt):
-    # type: (ExecRpt) -> NoReturn
-    global exec_rpt_count
-    exec_rpt_count = exec_rpt_count + 1
-    if exec_rpt_count % 100 == 0:
-        gmtradelogger.info(f'exec_rpt_count={exec_rpt_count}')
+    print(f'exec_rpt_count={exec_rpt_count}')
 
 
 def on_order_status(order):
-    # type: (Order) -> NoReturn
-    gmtradelogger.info(f'order_stats_count={order_stats_count}')
+    print(f'order_stats_count={order_stats_count}')
 
 
 def on_trade_data_connected():
-    gmtradelogger.info('连接上交易服务器.................')
+    print('连接上交易服务器.................')
 
 
 def on_trade_data_disconnected():
-    gmtradelogger.info('断开交易服务器......................')
+    print('断开交易服务器......................')
 
 
 def on_account_status(account_status):
-    # type: (AccountStatus) -> NoReturn
-    gmtradelogger.info(f'on_account_status status={account_status}')
+    print(f'on_account_status status={account_status}')
     
 # start函数用于启动回调事件接收，为非阻塞函数，如需要同步执行需自行阻塞
 status = start(filename=__file__) 
- 
 if status == 0:
-    gmtradelogger.info('连接成功, 开启运行')
+    print('连接成功, 开启运行')
 else:
-    gmtradelogger.info('连接失败, 结束程序')
+    print('连接失败, 结束程序')
     stop()
 
 
@@ -56,25 +48,9 @@ else:
 
 
 # 保持进程不退出，否则回调不再生效
-while True:
-    time.sleep(2)
+    info = input("输入任字符退出")
 ```
 ## 字段说明
-
-### Account - 账户对象
-
-
-| 属性                             | 类型                  | 说明                                                              |
-|:--------------------------------|:---------------------|:-----------------------------------------------------------------|
-| id                              | str                  | 账户id，实盘时用于指定交易账户                                                            |
-| title                           | str                 | 账户标题，实盘时用于指定账户名称                                                           |
-| cash                            | dict                 | [资金字典](#cash---资金对象 "资金字典")                                                  |
-| positions(symbol='', side=None) | list                 | [持仓情况](#position---持仓对象 "持仓情况") 列表, 默认全部持仓, 可根据单一symbol（类型str）, [side](#positionSide---持仓方向 "PositionSide - 持仓方向")参数缩小查询范围 |
-| position(symbol, side)          | dict | [持仓情况](#position---持仓对象 "持仓情况")，查询指定单一symbol（类型str）及持仓方向的持仓情况                                                           |
-
- 
-
-
 
 ### Order - 委托对象
 
@@ -227,6 +203,7 @@ login(accounts)
 
 启动eventloop，接收交易事件并触发回调函数. 返回int值, 0表示成功, 非0为失败
 
+### start - 启动推送
 **函数原型:**
 
 ```
@@ -243,8 +220,8 @@ start(filename=None, token=None, endpoint=None)
 
 **注意：**需要保持进程不退出，如：
 ```python
-while True:
-    time.sleep(2)
+# 保持进程不退出，否则回调不再生效
+    info = input("输入任字符退出"))
 ```
 
 
