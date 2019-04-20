@@ -8,8 +8,8 @@
 掘金仿真交易是为量化投资者打造的一个最接近真实市场环境的仿真平台，旨在以坚实的IT技术，助力化量化投研与投资。
 本服务主要面向量化投研机构和个人服务，提供整套证券仿真交易的信息化技术平台
 
-投资者通过掘金官网注册（https://www.myquant.cn）
-可用于量化策略的测试、检验、优选，提高投资策略实战技能；也提供独立部署，用于证券投研、培训、教育及投资大赛
+投资者可通过掘金官网注册（ https://www.myquant.cn ）后使用。
+本服务用于量化策略的测试、检验、优选，提高投资策略实战技能；也提供独立部署，用于证券投研、培训、教育及投资大赛
 
 ## 产品特点
 
@@ -23,7 +23,7 @@
 
 ## 使用指引
 
-仿真交易包含：界面和接口。
+仿真交易包含：`界面-手动交易`和`接口-自动化交易`。
 
 界面用于手动交易和查看账户情况，接口用于支持策略的仿真交易，不同语言的接口使用方法相近
 
@@ -46,16 +46,18 @@
 ![仿真交易](uploads/201903/attach_158e29f240e954b4.png)
 
 
-说明：
-- 交易界面采用WebSocket全双工通信的协议，可以同步监控当前账户的交易情况，比如监控策略交易情况
+> 交易界面采用WebSocket全双工通信的协议，可以同步监控当前账户的交易情况，比如监控策略交易情况
 
 
 ### 设置手续费和资金
-账户的交易手续费和资金可以独立设置，股票精确到交易市场，默认为10%%；期货精确到品种，默认值同步交易所公布的最新合约数据
+
+- 账户的交易手续费和资金可以独立设置，股票精确到交易市场，默认为10%%
+- 期货精确到品种，默认值同步交易所公布的最新合约数据
+- 手续费修改仅对当前账户生效
 
 ![账户信息查看和设置](uploads/201903/attach_158e28cdabc2eb14.png)
 
-- 手续费修改仅对当前账户生效
+
 
 
 ### 下载交易SDK
@@ -63,19 +65,32 @@
 **python交易SDK下载**
 - 准备环境：python3.6.0及以上版本
 - python默认安装包存放在pypi仓库中，推荐用标准库安装方式安装`gmtrade`,方法为:
-  在python.exe文件目录下用cmd命令窗口运行`pip install gmtrade`
+  在python.exe文件目录下用cmd命令窗口运行
+  
+```
+    pip install gmtrade
+```
 
 **C++交易SDK下载：**
 
-[点击下载：Windows系统64&32交易SDK](https://www.myquant.cn/download/sdk?type=2&platform=windows&lang=cpp)
+[点击下载：Windows系统 64&32交易SDK](https://www.myquant.cn/download/sdk?type=2&platform=windows&lang=cpp)
 
-[点击下载：Linux系统64&32交易SDK](https://www.myquant.cn/download/sdk?type=2&platform=linux&lang=cpp)
+[点击下载：Linux系统 64&32交易SDK](https://www.myquant.cn/download/sdk?type=2&platform=linux&lang=cpp)
 
 ### 配置服务地址
 
-在线仿真服务网关的公网地址为：discovery.myquant.cn；如果部署了本地版仿真服务，该地址默认指向本机服务地址
+在线仿真服务网关的公网地址
 
-配置服务地址`set_endpoint("discovery.myquant.cn")`
+```
+119.23.139.32:7101
+```
+
+如果部署了本地版仿真服务，该地址默认指向本机服务地址
+
+配置服务地址
+```
+set_endpoint("119.23.139.32:7101")
+```
 
 
 ### 配置身份信息
