@@ -5,7 +5,7 @@
     - [新建账户](README.md#新建账户)
     - [手工交易](README.md#手工交易)
     - [设置手续费和资金](README.md#设置手续费和资金)
-    - [下载交易SDK](README.md#下载交易sdk)
+    - [下载仿真交易SDK](README.md#下载仿真交易SDK)
     - [配置服务地址](README.md#配置服务地址)
     - [配置身份信息](README.md#配置身份信息)
     - [进行交易和查询](README.md#进行交易和查询)

@@ -3,44 +3,55 @@
 ## 示例
 
 ```python
-# 本示例运行于python3.6以上版本
+
+# 本示例运行于python3.6及以上版本
 from gmtrade.api import *
 
- # token身份认证，登录后可在仿真交易官网获取
+# token身份认证，掘金登录后可在仿真交易官网获取
 set_token("token")
- 
- # 示例中为掘金官方仿真服务地址，如接入掘金终端，则填空
-set_endpoint("119.23.139.32:7101") 
+
+# 示例中为掘金官方仿真服务地址，如接入掘金终端，则填空
+set_endpoint("discovery.myquant.cn")
 
 # 登录账户，账户ID由登录并申请仿真账户后，可复制获取；account_alias为账号别名，选填
 a1 = account(account_id='', account_alias='')
-login([a1])  # 注意结构是list
+login(a1)  # 注意，可以输入账户也可以输入账户组成的list
 
+# 获取登录账户的资金，如登录多个账户需要指定账户ID
+cash = get_cash()
+print(f"get_cash cash={cash}")
+
+# 获取登录账户的持仓，如登录多个账户需要指定账户ID
+poses = get_positions()
+print(f"get_positions poes={poses}")
+
+# 回报到达时触发
 def on_execution_report(rpt):
     print(f'exec_rpt_count={exec_rpt_count}')
 
-
+# 委托状态变化时触发
 def on_order_status(order):
     print(f'order_stats_count={order_stats_count}')
 
-
+# 交易服务连接成功后触发
 def on_trade_data_connected():
-    print('连接上交易服务器.................')
+    print('已连接交易服务.................')
 
-
+# 交易服务断开后触发
 def on_trade_data_disconnected():
-    print('断开交易服务器......................')
+    print('已断开交易服务.................')
 
-
+# 回报到达时触发
 def on_account_status(account_status):
     print(f'on_account_status status={account_status}')
-    
-# start函数用于启动回调事件接收，为非阻塞函数，如需要同步执行需自行阻塞
-status = start(filename=__file__) 
+
+# start函数用于启动回调事件接收，非必要；事件函数为非阻塞函数，如需要同步执行需自行阻塞
+# filename=__file__用于指定当前运行的文件，如需要指定其他文件filename=‘xxx’
+status = start(filename=__file__)
 if status == 0:
-    print('连接成功, 开启运行')
+    print('连接交易服务成功.................')
 else:
-    print('连接失败, 结束程序')
+    print('接交易服务失败.................')
     stop()
 
 
@@ -48,7 +59,7 @@ else:
 
 
 # 保持进程不退出，否则回调不再生效
-    info = input("输入任字符退出")
+info = input("输入任字符退出")
 ```
 ## 字段说明
 
@@ -56,7 +67,7 @@ else:
 
 | 属性                   | 类型               | 说明                                                                       |
 |:----------------------|:------------------|:--------------------------------------------------------------------------|
-| strategy_id           | str               | 策略ID                                                                     |
+                                                                 |
 | account_id            | str               | 账号ID                                                                     |
 | account_name          | str               | 账户登录名                                                                  |
 | cl_ord_id             | str               | 委托客户端ID，下单生成，固定不变                                                                |
@@ -93,7 +104,7 @@ else:
 
 | 属性                   | 类型               | 说明                                                                       |
 |:----------------------|:------------------|:--------------------------------------------------------------------------|
-| strategy_id           | str               | 策略ID                                                                     |
+                                                                |
 | account_id            | str               | 账号ID                                                                     |
 | account_name          | str               | 账户登录名                                                                  |
 | cl_ord_id             | str               | 委托客户端ID                                                                |
