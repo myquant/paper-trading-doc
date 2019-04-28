@@ -2,6 +2,7 @@
 
 ## 示例
 
+接口查询和委托示例
 ```python
 
 # 本示例运行于python3.6及以上版本
@@ -11,7 +12,7 @@ from gmtrade.api import *
 set_token("token")
 
 # 示例中为掘金官方仿真服务地址，如接入掘金终端，则填空
-set_endpoint("discovery.myquant.cn")
+set_endpoint("api.myquant.cn:80")
 
 # 登录账户，账户ID由登录并申请仿真账户后，可复制获取；account_alias为账号别名，选填
 a1 = account(account_id='', account_alias='')
@@ -24,6 +25,26 @@ print(f"get_cash cash={cash}")
 # 获取登录账户的持仓，如登录多个账户需要指定账户ID
 poses = get_positions()
 print(f"get_positions poes={poses}")
+
+# 限价、定量委托买入浦发银行股票 
+data = order_volume(symbol='SHSE.600000', volume=10000, side=OrderSide_Buy, order_type=OrderType_Limit, position_effect=PositionEffect_Open, price=11)
+```
+
+事件方式接收交易信息示例（更及时获取交易信息）
+```python
+
+# 本示例运行于python3.6及以上版本
+from gmtrade.api import *
+
+# token身份认证，掘金登录后可在仿真交易官网获取
+set_token("token")
+
+# 示例中为掘金官方仿真服务地址，如接入掘金终端，则填空
+set_endpoint("api.myquant.cn:80")
+
+# 登录账户，账户ID由登录并申请仿真账户后，可复制获取；account_alias为账号别名，选填
+a1 = account(account_id='', account_alias='')
+login(a1)  # 注意，可以输入账户也可以输入账户组成的list
 
 # 回报到达时触发
 def on_execution_report(rpt):
@@ -45,15 +66,15 @@ def on_trade_data_disconnected():
 def on_account_status(account_status):
     print(f'on_account_status status={account_status}')
 
-# start函数用于启动回调事件接收，非必要；事件函数为非阻塞函数，如需要同步执行需自行阻塞
-# filename=__file__用于指定当前运行的文件，如需要指定其他文件filename=‘xxx’
-status = start(filename=__file__)
-if status == 0:
-    print('连接交易服务成功.................')
-else:
-    print('接交易服务失败.................')
-    stop()
-
+if __name__ == "__main__":
+    # start函数用于启动回调事件接收，非必要；事件函数为非阻塞函数，如需要同步执行需自行阻塞
+    # filename=__file__用于指定当前运行的文件，如需要指定其他文件filename=‘xxx’
+    status = start(filename=__file__)
+    if status == 0:
+        print('连接交易服务成功.................')
+    else:
+        print('接交易服务失败.................')
+        stop()
 
 # 开始交易业务
 
