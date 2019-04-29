@@ -2,7 +2,7 @@
 
 ## 示例
 
-接口查询和委托示例
+### 接口查询和委托示例
 ```python
 
 # 本示例运行于python3.6及以上版本
@@ -27,10 +27,12 @@ poses = get_positions()
 print(f"get_positions poes={poses}")
 
 # 限价、定量委托买入浦发银行股票 
-data = order_volume(symbol='SHSE.600000', volume=10000, side=OrderSide_Buy, order_type=OrderType_Limit, position_effect=PositionEffect_Open, price=11)
+data = order_volume(symbol='SHSE.600000', volume=1000, side=OrderSide_Buy, order_type=OrderType_Limit, position_effect=PositionEffect_Open, price=11)
 ```
 
-事件方式接收交易信息示例（更及时获取交易信息）
+### 事件方式接收信息示例
+
+事件方式用于更及时获取交易信息
 ```python
 
 # 本示例运行于python3.6及以上版本
@@ -48,11 +50,11 @@ login(a1)  # 注意，可以输入账户也可以输入账户组成的list
 
 # 回报到达时触发
 def on_execution_report(rpt):
-    print(f'exec_rpt_count={exec_rpt_count}')
+    print(f'exec_rpt_count={rpt}')
 
 # 委托状态变化时触发
 def on_order_status(order):
-    print(f'order_stats_count={order_stats_count}')
+    print(f'order_stats_count={order}')
 
 # 交易服务连接成功后触发
 def on_trade_data_connected():
