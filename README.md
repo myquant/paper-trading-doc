@@ -1,4 +1,13 @@
 
+## 产品与服务
+
+-------
+掘金仿真交易是为量化投资者打造的一个最接近真实市场环境的仿真平台，旨在以坚实的IT技术，助力化量化投研与投资。
+本服务主要面向量化投研机构和个人服务，提供整套证券仿真交易的信息化技术平台
+
+投资者可通过掘金官网注册（ https://www.myquant.cn ）后使用。
+本服务适用于量化策略开发的检验、测试、优选，提高投资策略实战能力；也提供独立部署，用于证券投研、培训、教育及投资大赛
+
 ## 5分钟上手指引
 
 让我们一起花上5分钟，快速上手掘金仿真，交易起来！如果您希望通过API接入，请参考下面的`API接入交易指引`部分。
@@ -73,9 +82,9 @@
 
 ### 配置服务地址
 
-仿真服务的API接入地址（ip:port)，默认接入地址：`sim.myquant.cn:80`
+仿真服务的API接入地址（ip:port)，默认接入地址：`api.myquant.cn:9000`
 ```
-set_endpoint("sim.myquant.cn:80")
+set_endpoint("api.myquant.cn:9000")
 ```
 
 ### 仿真账户登录
@@ -97,7 +106,7 @@ from gmtrade.api import *
 set_token("your token")
 
 # 示例中为掘金官方仿真服务地址；如API接入掘金终端，则填空字符串
-set_endpoint("sim.myquant.cn")
+set_endpoint("api.myquant.cn:9000")
 
 # 登录账户，account_id为账户ID，必填；account_alias为账号别名，选填
 a1 = account(account_id='', account_alias='')

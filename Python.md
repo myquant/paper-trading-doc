@@ -1,6 +1,6 @@
 # python接口
 
-## 示例
+## API接入示例
 
 ### 接口查询和委托示例
 ```python
@@ -12,7 +12,7 @@ from gmtrade.api import *
 set_token("token")
 
 # 示例中为掘金官方仿真服务地址，如接入掘金终端，则填空
-set_endpoint("api.myquant.cn:80")
+set_endpoint("api.myquant.cn:9000")
 
 # 登录账户，账户ID由登录并申请仿真账户后，可复制获取；account_alias为账号别名，选填
 a1 = account(account_id='', account_alias='')
@@ -42,7 +42,7 @@ from gmtrade.api import *
 set_token("token")
 
 # 示例中为掘金官方仿真服务地址，如接入掘金终端，则填空
-set_endpoint("api.myquant.cn:80")
+set_endpoint("api.myquant.cn:9000")
 
 # 登录账户，账户ID由登录并申请仿真账户后，可复制获取；account_alias为账号别名，选填
 a1 = account(account_id='', account_alias='')
