@@ -1,41 +1,303 @@
 
 # C++
+## 接口介绍
+-------
+
+  本接口用于股票、期货各品种的交易，可适配于掘金量化终端的实盘交易和掘金仿真交易柜台
+  特别适用于量化实盘投资和仿真交易，具有运行稳定、多语言支持、形式简洁、格式统一的特点
+
+-------
 
 ## API接入示例
+
+### 接口查询和委托示例
+
 ```cpp
+
+#include <iostream>
+#include "gmtrade.h"
+#include "gmtrade_def.h"
+
+//引入命名空间
+using namespace gmtrade;
+using namespace std;
+
+int main ()
+{
+	//token身份认证
+	//不关注交易事件, 可以直接使用Trade类对象调用交易函数进行交易
+	Trade mt ("token");
+
+	//设置仿真服务地址api.myquant.cn:9000
+	mt.set_endpoint ("api.myquant.cn:9000");
+
+	//登录账户ID
+	mt.login ("account_id");
+
+	//查持仓
+	DataArray<Position> *ps = mt.get_position ();
+	if (ps->status () == 0)
+	{
+		//遍历持仓
+		for (int i = 0; i < ps->count (); i++)
+		{
+			Position &p = ps->at (i);
+			cout << "account_id: " << p.account_id << endl;
+			cout << "available: " << p.available << endl;
+			cout << "symbol: " << p.symbol << endl;
+			cout << "fpnl: " << p.fpnl << endl;
+			cout << "volume: " << p.volume << endl;
+			cout << "vwap: " << p.vwap << endl;
+		}
+		//内存释放
+		ps->release ();
+	}
+
+	//下单, 以市场价买入1000股浦发银行
+	Order order = mt.order_volume ("SHSE.600000", 1000, OrderSide_Buy, OrderType_Market, PositionEffect_Open);
+
+	//撤单
+	mt.order_cancel (order.cl_ord_id);
+	
+	//获取执行回报
+	DataArray<ExecRpt>* rpts = mt.get_execution_reports ();
+	if (rpts->status () == 0)
+	{
+		//遍历执行回报
+		// ...
+		
+		//释放内存
+		rpts->release ();
+	}
+	
+	//查委托
+	DataArray<Order>* orders = mt.get_orders ();
+	if (orders->status () == 0)
+	{
+		//遍历委托
+		//	...
+		//释放内存
+		orders->release ();
+	}
+	
+	//查资金
+	Cash cash{};
+	int res = mt.get_cash (cash);
+	if (res == 0)
+	{
+		cout << "account_id: "<< cash.account_id;
+		cout << "available: " << cash.available;
+		cout << "balance: " << cash.balance;
+		cout << "fpnl: " << cash.fpnl;
+	}
+
+	cout << "程序结束" << endl;
+	getchar();
+}
+
+```
+
+### 事件方式接收交易信息示例（更及时获取交易信息）
+
+```cpp
+#include <iostream>
+#include "gmtrade.h"
+
+//引入命名空间
+using namespace gmtrade;
+using namespace std;
+
+//定义交易类, 继承Trade, 通过重写方法关注交易时间, 如 on_order_status, on_execution_report 等, 具体事件说明参考"交易事件类型"
+class MyTrade:public Trade
+{
+public:
+	MyTrade (const std::string& token)
+		:Trade (token.c_str())
+	{
+		
+	}
+
+	//关注委托状态变化
+	void on_order_status(Order* order) override
+	{
+		cout << "symbol: " << order->symbol << endl;
+		cout << "cl_ord_id" << order->cl_ord_id << endl;
+		cout << "status: " << order->status << endl;
+		cout << "volume: " << order->volume << endl;
+		cout << "filled_amount: " << order->filled_amount << endl;
+		cout << "filled_commission: " << order->filled_commission << endl;
+		cout << "filled_volume: " << order->filled_volume << endl;
+		cout << "filled_vwap: " << order->filled_vwap << endl;
+		cout << "created_at: " << order->created_at << endl;
+
+	}
+
+	//关注执行回报, 如成交, 撤单拒绝等
+	void on_execution_report(ExecRpt* rpt) override
+	{
+		cout << "price: " << rpt->price << endl;
+		cout << "volume: " << rpt->volume << endl;
+		cout << "amount: " << rpt->amount << endl;
+		cout << "commission: " << rpt->commission << endl;
+		cout << "cost: " << rpt->cost << endl;
+		cout << "created_at: " << rpt->created_at<< endl;
+	}
+
+	void on_trade_data_connected () override
+	{
+		cout << "连接上交易服务器 .........." << endl;
+	}
+
+	void on_trade_data_disconnected () override
+	{
+		cout << "断开交易服务器 ........." << endl;
+	}
+
+	void on_account_status (AccountStatus *account_status) override
+	{
+		cout << "账户状态变化 : " << account_status->state << endl;
+	}
+};
+
 int main()
 {
 	//token身份认证
-	MyTrade mt ("xxx"); 
+	MyTrade mt ("token"); 
 	
-	// 示例中为掘金官方仿真服务地址，如接入掘金终端，则填空
-	mt.set_endpoint ("");
-	//登录账户
-	mt.login("xxx");
-	//事件回调启动函数
+	// 设置服务地址api.myquant.cn:9000
+	mt.set_endpoint ("api.myquant.cn:9000");
 
+	//登录账户id
+	mt.login("account_id");
+
+
+	//开始接收事件
 	int status = mt.start ();
+
+	//判断状态
 	if (status == 0)
 	{
 		cout << "连接成功, 开始运行" << endl;
 	}
 	else
 	{
-		cout << "连接失败, 结束程序" << endl;
-		mt.stop ();
+		cout << "连接失败" << endl;
 	}
-	
+
+
 	// 保持进程不退出，否则回调不再生效
 	getchar();
+}
 
 ```
-## 字段说明
 
+
+## Trade类定义
+
+```cpp
+
+namespace gmtrade
+{
+
+	class GM_TRADE_API Trade
+	{
+	public:
+		Trade(const char *token);
+		Trade();
+		virtual ~Trade();
+
+	public: //基础函数
+
+		//开始接收事件
+		int start();
+
+		//停止接收事件
+		void stop();
+
+		//设置用户token
+		void set_token(const char *token);
+
+		//设置服务地址
+		void set_endpoint(const char *serv_addr);
+
+
+	public: //交易函数
+
+		int login(const char *account_ids);
+
+		//按指定量委托
+		Order order_volume(const char *symbol, int volume, int side, int order_type, int position_effect, double price = 0, const char *account = NULL);
+
+		//按指定价值委托
+		Order order_value(const char *symbol, double value, int side, int order_type, int position_effect, double price = 0, const char *account = NULL);
+
+		//按总资产指定比例委托
+		Order order_percent(const char *symbol, double percent, int side, int order_type, int position_effect, double price = 0, const char *account = NULL);
+
+		//调仓到目标持仓量
+		Order order_target_volume(const char *symbol, int volume, int position_side, int order_type, double price = 0, const char *account = NULL);
+
+		//调仓到目标持仓额
+		Order order_target_value(const char *symbol, double value, int position_side, int order_type, double price = 0, const char *account = NULL);
+
+		//调仓到目标持仓比例（总资产的比例）
+		Order order_target_percent(const char *symbol, double percent, int position_side, int order_type, double price = 0, const char *account = NULL);
+
+		//平当前所有可平持仓
+		DataArray<Order>* order_close_all();
+
+		//委托撤单
+		int order_cancel(const char *cl_ord_id, const char *account = NULL);
+
+		//撤销所有委托
+		int order_cancel_all();
+
+		//委托下单
+		Order place_order(const char *symbol, int volume, int side, int order_type, int position_effect, double price = 0, int order_duration = 0, int order_qualifier = 0, double stop_price = 0, const char *account = NULL);
+
+		//查询资金
+		int get_cash(Cash &cash, const char *accounts = NULL);
+
+		//查询委托
+		DataArray<Order>* get_orders(const char *account = NULL);
+
+		//查询未结委托
+		DataArray<Order>* get_unfinished_orders(const char *account = NULL);
+
+		//查询成交
+		DataArray<ExecRpt>* get_execution_reports(const char *account = NULL);
+
+		//查询持仓
+		DataArray<Position>* get_position(const char *account = NULL);
+
+
+	public: //事件函数
+
+		//委托变化
+		virtual void on_order_status(Order *order);
+		//执行回报
+		virtual void on_execution_report(ExecRpt *rpt);
+		//实盘账号状态变化
+		virtual void on_account_status(AccountStatus *account_status);
+		//错误产生
+		virtual void on_error(int error_code, const char *error_msg);
+		//数据已经连接上
+		virtual void on_trade_data_connected();
+		//交易连接断开了
+		virtual void on_trade_data_disconnected();
+
+	};
+
+} //namespace gmtrade
+
+```
+
+
+##字段和参数
 ### Order - 委托对象
 
 | 属性                   | 类型               | 说明                                                                       |
 |:----------------------|:------------------|:--------------------------------------------------------------------------|
-                                                                 |
 | account_id            | str               | 账号ID                                                                     |
 | account_name          | str               | 账户登录名                                                                  |
 | cl_ord_id             | str               | 委托客户端ID，下单生成，固定不变                                                                |
@@ -72,7 +334,7 @@ int main()
 
 | 属性                   | 类型               | 说明                                                                       |
 |:----------------------|:------------------|:--------------------------------------------------------------------------|
-| strategy_id           | str               | 策略ID                                                                     |
+                                                                   |
 | account_id            | str               | 账号ID                                                                     |
 | account_name          | str               | 账户登录名                                                                  |
 | cl_ord_id             | str               | 委托客户端ID                                                                |
@@ -489,7 +751,7 @@ DataArray<ExecRpt>* get_execution_reports(const char *account = NULL);
 
 ## 枚举常量
 
-#### OrderStatus - 委托状态
+### OrderStatus - 委托状态
 
 ```cpp
 OrderStatus_Unknown = 0
@@ -504,7 +766,7 @@ OrderStatus_PendingNew = 10           ## 待报
 OrderStatus_Expired = 12              ## 已过期
 ```
 
-#### OrderSide - 委托方向
+### OrderSide - 委托方向
 
 ```cpp
 OrderSide_Unknown = 0     
@@ -512,7 +774,7 @@ OrderSide_Buy = 1             ## 买入
 OrderSide_Sell = 2            ## 卖出
 ```
 
-#### OrderType - 委托类型
+### OrderType - 委托类型
 
 ```cpp
 OrderType_Unknown = 0  
@@ -521,7 +783,7 @@ OrderType_Market = 2           ## 市价委托
 OrderType_Stop = 3             ## 止损止盈委托
 ```
 
-#### OrderDuration - 委托时间属性
+### OrderDuration - 委托时间属性
 仅在实盘模式生效，具体执行模式请参考交易所给出的定义
 
 ```cpp
@@ -535,7 +797,7 @@ OrderDuration_GTC = 6           ## 撤销前有效(goodtillcancel)
 OrderDuration_GFA = 7           ## 集合竞价前有效(good for auction)
 ```
 
-#### OrderQualifier - 委托成交属性
+### OrderQualifier - 委托成交属性
 仅在实盘模式生效，具体执行模式请参考交易所给出的定义
 
 ```cpp
@@ -546,7 +808,7 @@ OrderQualifier_B5TC    = 3            ## 最优五档剩余撤销(best 5 then ca
 OrderQualifier_B5TL    = 4            ## 最优五档剩余转限价(best 5 then limit)
 ```
 
-#### ExecType - 执行回报类型
+### ExecType - 执行回报类型
 
 ```cpp
 ExecType_Unknown = 0
@@ -563,7 +825,7 @@ ExecType_CancelRejected = 19          ## 撤单被拒绝
 ```
 
 
-#### PositionEffect - 开平仓类型
+### PositionEffect - 开平仓类型
 
 ```cpp
 PositionEffect_Unknown = 0
@@ -574,7 +836,7 @@ PositionEffect_CloseYesterday = 4        ## 平昨仓
 
 ```
 
-#### PositionSide - 持仓方向
+### PositionSide - 持仓方向
 
 ```cpp
 PositionSide_Unknown = 0
@@ -582,7 +844,7 @@ PositionSide_Long = 1            ## 多方向
 PositionSide_Short = 2           ## 空方向
 ```
 
-#### OrderRejectReason - 订单拒绝原因
+### OrderRejectReason - 订单拒绝原因
 
 ```cpp
 OrderRejectReason_Unknown = 0                          ## 未知原因
@@ -602,7 +864,7 @@ OrderRejectReason_OrderTypeNotSupported = 14           ## 委托类型不支持
 OrderRejectReason_Throttle = 15                        ## 流控限制
 ```
 
-#### CancelOrderRejectReason - 取消订单拒绝原因
+### CancelOrderRejectReason - 取消订单拒绝原因
 
 ```cpp
 CancelOrderRejectReason_OrderFinalized = 101           ## 委托已完成
@@ -611,7 +873,7 @@ CancelOrderRejectReason_BrokerOption = 103             ## 柜台设置
 CancelOrderRejectReason_AlreadyInPendingCancel = 104   ## 委托撤销中
 ```
 
-#### OrderStyle - 订单类型
+### OrderStyle - 订单类型
 
 ```cpp
 OrderStyle_Unknown = 0
@@ -623,7 +885,7 @@ OrderStyle_TargetValue = 5                             ## 调仓到目标持仓�
 OrderStyle_TargetPercent = 6                           ## 调仓到目标持仓比例
 ```
 
-#### CashPositionChangeReason - 仓位变更原因
+### CashPositionChangeReason - 仓位变更原因
 
 ```cpp
 CashPositionChangeReason_Unknown = 0
@@ -631,7 +893,7 @@ CashPositionChangeReason_Trade = 1            ## 交易
 CashPositionChangeReason_Inout = 2            ## 出入金 / 出入持仓
 ```
 
-#### SecType - 标的类别
+### SecType - 标的类别
 ```cpp
 SEC_TYPE_STOCK = 1                          ## 股票
 SEC_TYPE_FUND = 2                           ## 基金
@@ -642,7 +904,8 @@ SEC_TYPE_CONFUTURE = 10                     ## 虚拟合约
 ```
 
 
-#### AccountStatus - 交易账户状态
+### AccountStatus - 交易账户状态
+
 ```cpp
 
 State_UNKNOWN = 0;       //未知
@@ -653,6 +916,194 @@ State_DISCONNECTING = 4; //断开中
 State_DISCONNECTED = 5;  //已断开
 State_ERROR = 6;         //错误
 ```
+
+
+## 返回数据类型
+
+### DataArray
+
+DataArray类模块是行情与交易数据查询的标准返回， 表示一个结构体数组。类声明如下:
+
+#### 类定义
+```cpp
+template <typename T>
+class DataArray
+{
+public:
+	//获取api调用结果, 0: 成功， 非0: 错误码
+	virtual int status() = 0;
+
+	//返回结构数组的指针
+	virtual T* data() = 0;
+
+	//返回数据的长度
+	virtual int count() = 0;
+
+	//返回下标为i的结构引用，从0开始
+	virtual T& at(int i) = 0;
+
+	//释放数据集合
+	virtual void release() = 0;
+};
+
+```
+
+典型的使用场景如下：
+
+1. 调用数据查询函数返回一个DataArray<T>对象指针 DataArray<T> *da;
+2. 调用`da->status()` 判断函数调用是否成功，0表示成功，非0表示错误码，调用失败，数组长度为0
+3. 如果`da->status()`返回成功，则可以遍历数组。
+4. 调用`da->release()` 释放结果集。
+
+
+#### 使用举例
+
+```cpp
+
+//查询一段tick行情
+DataArray<Tick> *da = history_ticks("SHSE.600000", "2018-07-16 09:30:00", "2018-07-16 10:30:00");
+
+if (da->status() == 0) //判断查询是否成功
+{
+	//遍历行情数组
+	for (int i = 0; i < da->count(); i++)
+	{
+		cout << da->at(i).symbol << " " << da->at(i).price << endl;
+	}
+}
+
+//释放数组
+da->release();
+
+```
+
+#### 另一种遍历方式
+
+```cpp
+
+//查询一段tick行情
+DataArray<Tick> *da = history_ticks("SHSE.600000", "2018-07-16 09:30:00", "2018-07-16 10:30:00");
+
+if (da->status() == 0) //判断查询是否成功
+{
+	//获得原始数组指针
+	Tick *ticks = da->data();
+
+	//遍历行情数组
+	for (int i = 0; i < da->count(); i++)
+	{
+		cout << ticks[i].symbol << " " << ticks[i].price << endl;
+	}
+}
+
+//释放数组
+da->release();
+
+```
+
+#### 成员函数
+
+##### status 获取函数调用结果
+
+获得结果集之后， 第一步都应该先调用本成员函数判断查询数据是否成功。
+
+**函数原型:**
+
+```cpp
+int status()
+```
+
+**参数：**
+
+| 参数名      | 类型 | 说明                   |
+|:-----------|:----|:-----------------------|
+| 返回值      | int | 0: 成功， 非0: 错误码 |
+
+
+**注意：**
+
+**1.** 如果status 断定为失败时， 不应该再遍历数组， 这时直接释放数组即可。
+
+
+
+##### data 返回结构数组的指针
+
+返回数组的原始指针， 可以用于遍历和拷贝数据。
+
+**函数原型:**
+
+```cpp
+T* data()
+```
+
+**参数：**
+
+| 参数名      | 类型 | 说明                   |
+|:-----------|:----|:-----------------------|
+| 返回值      | 结构指针 | 具体取决于实例化类时的模板参数 |
+
+
+**注意：**
+
+**1.** 如果status 断定为失败时， 不应该再遍历数组， 这时直接释放数组即可。
+
+
+##### count 返回数组长度
+
+指的是元素个数
+
+**函数原型:**
+
+```cpp
+int count()
+```
+
+**参数：**
+
+| 参数名      | 类型 | 说明                   |
+|:-----------|:----|:-----------------------|
+| 返回值      | int | 数据元素个数 |
+
+
+**注意：**
+
+**1.** 如果status 断定为失败时， 不应该再遍历数组， 这时直接释放数组即可。
+
+
+##### at 返回元素值
+
+返回下标为i的结构引用，从0开始
+
+**函数原型:**
+
+```cpp
+T& at(int i)
+```
+
+**参数：**
+
+| 参数名      | 类型 | 说明                   |
+|:-----------|:----|:-----------------------|
+| i      | int  | 数组下标，从0开始 |
+| 返回值      | T& | 返回数据元素的引用，具体取决于实例化类时的模板参数 |
+
+
+**注意：**
+
+**1.** 如果status 断定为失败时， 不应该再遍历数组， 这时直接释放数组即可。
+
+
+##### release 释放数组
+
+获取DataArray指针之后，最后都应该释放(不管status是什么状态)， 不然会造成内存泄露。调用release之后，不能再调用任何成员函数。
+
+
+**函数原型:**
+
+```cpp
+void release()
+```
+
 ## 错误码
 
 | 错误码 | 描述                                      |
@@ -665,6 +1116,6 @@ State_ERROR = 6;         //错误
 | 1013  | 交易服务调用错误                            |
 | 1019  | 交易网关服务调用错误                        |
 | 1020  | 无效的ACCOUNT_ID                          |
-| 1021  | 非法日期格式                               |
+| 1022  | 执行超时                               |
 | 1100  | 交易消息服务连接失败                        |
 | 1101  | 交易消息服务断开                            |
