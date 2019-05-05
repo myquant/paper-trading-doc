@@ -6,7 +6,7 @@
     - [下载交易数据](README.md#下载交易数据)
     - [对我的交易做绩效分析](README.md#对我的交易做绩效分析)
 - [API交易指引](README.md#API交易接入指引)
-    - [下载仿真交易SDK](README.md#下载仿真交易SDK)
+    - [下载SDK](README.md#下载交易SDK)
     - [配置服务地址](README.md#配置服务地址)
     - [仿真账户登录](README.md#仿真账户登录)
     - [进行交易和查询](README.md#进行交易和查询)
