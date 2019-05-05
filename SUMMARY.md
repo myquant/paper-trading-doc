@@ -26,7 +26,7 @@
         - [on_order_status - 委托状态更新事件](Python.md#onorderstatus---委托状态更新事件)
         - [on_execution_report - 委托执行回报事件](Python.md#onexecutionreport---委托执行回报事件)
         - [on_account_status - 交易账户状态更新事件](Python.md#onaccountstatus---交易账户状态更新事件)
-        - [on_error - 错误事件](Python.md#oonerror---错误事件)
+        - [on_error - 错误事件](Python.md#onerror---错误事件)
         - [on_trade_data_connected - 交易通道网络连接成功事件](Python.md#ontradedataconnected---交易通道网络连接成功事件)
         - [on_trade_data_disconnected - 交易通道网络连接断开事件](Python.md#ontradedatadisconnected---交易通道网络连接断开事件)
     - [委托和查询](Python.md#委托和查询)
